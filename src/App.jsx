@@ -19,11 +19,12 @@ import {
   Bot,
   Cpu,
 } from "lucide-react";
+import { LanguageProvider, useLanguage, languageMeta } from "./i18n";
 
 /**
  * Revoluk Solution's — Institutional Landing Page
  * Design language: expo.dev inspired dark mode
- * Single-file, self-contained React component (Tailwind CSS + lucide-react)
+ * Trilíngue (PT/EN/IT) com detecção automática por geolocalização (src/i18n.js)
  */
 
 // ---------------------------------------------------------------------------
@@ -136,11 +137,43 @@ function RevolukMark({ size = 28, glow = true }) {
 }
 
 // ---------------------------------------------------------------------------
+// Seletor de idioma
+// ---------------------------------------------------------------------------
+function LanguageSwitcher({ compact = false }) {
+  const { lang, setLang } = useLanguage();
+  const codes = Object.keys(languageMeta);
+
+  return (
+    <div
+      className={`inline-flex items-center gap-0.5 rounded-full border border-zinc-800/70 bg-zinc-900/40 p-0.5 ${
+        compact ? "" : ""
+      }`}
+    >
+      {codes.map((code) => (
+        <button
+          key={code}
+          onClick={() => setLang(code)}
+          aria-label={languageMeta[code].name}
+          className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+            lang === code
+              ? "bg-zinc-50 text-zinc-950"
+              : "text-zinc-400 hover:text-zinc-100"
+          }`}
+        >
+          {languageMeta[code].label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------
 function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -149,10 +182,10 @@ function Header() {
   }, []);
 
   const navLinks = [
-    { label: "Produtos", href: "#produtos" },
-    { label: "Serviços", href: "#servicos" },
-    { label: "História", href: "#historia" },
-    { label: "Contato", href: "#contato" },
+    { label: t.nav.produtos, href: "#produtos" },
+    { label: t.nav.servicos, href: "#servicos" },
+    { label: t.nav.historia, href: "#historia" },
+    { label: t.nav.contato, href: "#contato" },
   ];
 
   return (
@@ -183,12 +216,13 @@ function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-3">
+          <LanguageSwitcher />
           <a
             href="#contato"
             className="inline-flex items-center gap-1.5 rounded-full bg-zinc-50 text-zinc-950 text-sm font-medium px-4 py-2 hover:bg-white transition-colors"
           >
-            Fale Conosco
+            {t.nav.cta}
           </a>
         </div>
 
@@ -213,12 +247,13 @@ function Header() {
               {link.label}
             </a>
           ))}
+          <LanguageSwitcher />
           <a
             href="#contato"
             onClick={() => setOpen(false)}
             className="inline-flex items-center justify-center gap-1.5 rounded-full bg-zinc-50 text-zinc-950 text-sm font-medium px-4 py-2.5 mt-1"
           >
-            Fale Conosco
+            {t.nav.cta}
           </a>
         </div>
       )}
@@ -230,6 +265,8 @@ function Header() {
 // Hero
 // ---------------------------------------------------------------------------
 function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section
       id="top"
@@ -245,22 +282,20 @@ function Hero() {
         <Reveal>
           <span className="inline-flex items-center gap-2 rounded-full border border-zinc-800/70 bg-zinc-900/40 px-3.5 py-1.5 text-xs text-zinc-400 mb-7">
             <span className="h-1.5 w-1.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
-            Sede em Niterói, RJ &amp; Milão, IT
+            {t.hero.badge}
           </span>
         </Reveal>
 
         <Reveal delay={80}>
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-zinc-50 leading-[1.08]">
-            A Revolução Inteligente
-            <br className="hidden sm:block" /> para o seu Negócio.
+            {t.hero.title1}
+            <br className="hidden sm:block" /> {t.hero.title2}
           </h1>
         </Reveal>
 
         <Reveal delay={160}>
           <p className="mt-6 text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            Da gestão financeira autônoma à automação industrial no chão de
-            fábrica. Soluções de software que transformam ideias em
-            eficiência global.
+            {t.hero.subtitle}
           </p>
         </Reveal>
 
@@ -270,14 +305,14 @@ function Hero() {
               href="#produtos"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-zinc-50 text-zinc-950 text-sm font-medium px-6 py-3 hover:bg-sky-300 hover:shadow-[0_0_24px_rgba(125,211,252,0.4)] transition-all"
             >
-              Explorar Soluções
+              {t.hero.btnPrimary}
               <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#historia"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-zinc-700 text-zinc-200 text-sm font-medium px-6 py-3 hover:border-zinc-500 hover:bg-zinc-900/40 transition-all"
             >
-              Nossa História
+              {t.hero.btnSecondary}
             </a>
           </div>
         </Reveal>
@@ -325,6 +360,7 @@ function MosaicoStyles() {
 }
 
 function MosaicLogoCard() {
+  const { t } = useLanguage();
   return (
     <div className="group relative rounded-2xl border border-zinc-800/50 bg-zinc-900/30 p-8 sm:p-10 flex flex-col items-center justify-center text-center overflow-hidden hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300 lg:row-span-2">
       <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-64 w-64 bg-sky-500/10 blur-[90px] rounded-full revoluk-pulse-glow" />
@@ -337,10 +373,10 @@ function MosaicLogoCard() {
       </div>
 
       <h3 className="text-2xl sm:text-3xl font-semibold text-zinc-50 tracking-tight">
-        O Ecossistema Revoluk
+        {t.mosaic.logoTitle}
       </h3>
       <p className="mt-3 text-sm text-zinc-400 leading-relaxed max-w-xs">
-        15+ anos evoluindo. Impulsionando negócios em 2 continentes.
+        {t.mosaic.logoSubtitle}
       </p>
 
       <a
@@ -348,13 +384,14 @@ function MosaicLogoCard() {
         className="mt-7 inline-flex items-center gap-2 rounded-full bg-zinc-50 text-zinc-950 text-sm font-medium px-4 py-2 hover:bg-sky-300 transition-colors"
       >
         <Globe className="h-4 w-4" />
-        revoluksolutions.com
+        {t.mosaic.logoLink}
       </a>
     </div>
   );
 }
 
 function MosaicDashboardCard() {
+  const { t } = useLanguage();
   const bars = [40, 70, 55, 90, 65, 100, 75];
   return (
     <div className="group relative rounded-2xl border border-zinc-800/50 bg-zinc-900/30 p-5 sm:p-6 overflow-hidden hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300">
@@ -362,10 +399,10 @@ function MosaicDashboardCard() {
         <div className="flex items-center justify-between mb-4">
           <span className="text-[11px] text-zinc-500 flex items-center gap-1.5">
             <BarChart3 className="h-3.5 w-3.5 text-sky-300" />
-            Orizon · Previsibilidade
+            {t.mosaic.dashboardLabel}
           </span>
           <span className="text-[10px] text-emerald-400 bg-emerald-500/10 rounded-full px-2 py-0.5">
-            +18,4%
+            {t.mosaic.dashboardBadge}
           </span>
         </div>
         <div className="flex items-end gap-2 h-20">
@@ -390,14 +427,17 @@ function MosaicDashboardCard() {
         ))}
       </div>
       <p className="mt-4 text-xs text-zinc-500 leading-relaxed">
-        <span className="text-zinc-200 font-medium">100% dos processos</span>{" "}
-        de gestão financeira e roteirização em um único painel.
+        <span className="text-zinc-200 font-medium">
+          {t.mosaic.dashboardCaptionStrong}
+        </span>
+        {t.mosaic.dashboardCaption}
       </p>
     </div>
   );
 }
 
 function MosaicIconsCard() {
+  const { t } = useLanguage();
   const icons = [
     { Icon: Wallet, color: "from-sky-400 to-sky-600", r: "-10deg" },
     { Icon: Plane, color: "from-indigo-400 to-indigo-600", r: "6deg" },
@@ -423,25 +463,25 @@ function MosaicIconsCard() {
         ))}
       </div>
       <p className="text-sm font-medium text-zinc-50 text-center">
-        Todo produto nativo, sem gambiarra
+        {t.mosaic.iconsTitle}
       </p>
       <p className="mt-1.5 text-xs text-zinc-500 text-center max-w-[220px]">
-        Finanças, viagens, autoatendimento e chão de fábrica, sob a mesma
-        arquitetura.
+        {t.mosaic.iconsSubtitle}
       </p>
     </div>
   );
 }
 
 function MosaicBannerCard() {
+  const { t } = useLanguage();
   return (
     <div className="group relative rounded-2xl border border-zinc-800/50 bg-zinc-900/30 p-6 sm:p-8 overflow-hidden hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300 lg:col-span-2">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-orange-500/10 revoluk-shimmer" />
 
       <div className="relative flex flex-col sm:flex-row items-center justify-between gap-6">
         <p className="text-lg sm:text-xl font-medium text-zinc-50 text-center sm:text-left">
-          Impulsionando negócios com{" "}
-          <span className="text-sky-300">automação inteligente</span>
+          {t.mosaic.bannerText}{" "}
+          <span className="text-sky-300">{t.mosaic.bannerHighlight}</span>
         </p>
 
         <div className="flex items-center gap-3">
@@ -488,6 +528,7 @@ function Mosaico() {
 // Produtos — Bento Grid
 // ---------------------------------------------------------------------------
 function ProductCard({ icon: Icon, title, tag, description, className = "", accent }) {
+  const { t } = useLanguage();
   return (
     <div
       className={`group relative rounded-2xl border border-zinc-800/50 bg-zinc-900/30 p-6 sm:p-7 overflow-hidden transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900/60 ${className}`}
@@ -512,7 +553,7 @@ function ProductCard({ icon: Icon, title, tag, description, className = "", acce
         {description}
       </p>
       <div className="relative mt-5 flex items-center gap-1 text-sm text-zinc-500 group-hover:text-sky-300 transition-colors">
-        Saiba mais
+        {t.products.saibaMais}
         <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
       </div>
     </div>
@@ -520,21 +561,20 @@ function ProductCard({ icon: Icon, title, tag, description, className = "", acce
 }
 
 function Produtos() {
+  const { t } = useLanguage();
   return (
     <section id="produtos" className="px-5 sm:px-8 py-24">
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <div className="max-w-2xl mb-12">
             <span className="text-xs uppercase tracking-widest text-sky-400/80 font-medium">
-              Plataformas SaaS
+              {t.products.eyebrow}
             </span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-semibold text-zinc-50 tracking-tight">
-              Produtos que movem negócios
+              {t.products.title}
             </h2>
             <p className="mt-4 text-zinc-400 leading-relaxed">
-              Um portfólio de plataformas prontas para escalar operações
-              financeiras, comerciais e industriais em qualquer lugar do
-              mundo.
+              {t.products.subtitle}
             </p>
           </div>
         </Reveal>
@@ -543,36 +583,36 @@ function Produtos() {
           <Reveal delay={0}>
             <ProductCard
               icon={Wallet}
-              tag="Finanças"
-              title="Revoluk Orizon"
-              description="Um dos melhores aplicativos de gestão financeira do mundo, com foco em previsibilidade e controle total do seu fluxo de caixa."
+              tag={t.products.card1.tag}
+              title={t.products.card1.title}
+              description={t.products.card1.description}
               accent="bg-sky-500/20"
             />
           </Reveal>
           <Reveal delay={80}>
             <ProductCard
               icon={Plane}
-              tag="Viagens · IA"
-              title="Orizon Trips"
-              description="Plataforma de roteiros de viagem com agentes de IA que projetam experiências globais de forma eficiente e personalizada."
+              tag={t.products.card2.tag}
+              title={t.products.card2.title}
+              description={t.products.card2.description}
               accent="bg-indigo-500/20"
             />
           </Reveal>
           <Reveal delay={160}>
             <ProductCard
               icon={MonitorSmartphone}
-              tag="White-label"
-              title="Revoluk MyKiosk"
-              description="Plataforma white-label para empresas criarem seus próprios sistemas robustos de autoatendimento e suporte ao cliente."
+              tag={t.products.card3.tag}
+              title={t.products.card3.title}
+              description={t.products.card3.description}
               accent="bg-emerald-500/20"
             />
           </Reveal>
           <Reveal delay={240}>
             <ProductCard
               icon={Factory}
-              tag="Indústria 4.0"
-              title="Revoluk MES"
-              description="Software completo de gestão de fábrica. Baixo custo de implementação, mitigação de falhas em sistemas automatizados de logística e etiquetagem, foco total na produção."
+              tag={t.products.card4.tag}
+              title={t.products.card4.title}
+              description={t.products.card4.description}
               accent="bg-orange-500/20"
             />
           </Reveal>
@@ -595,6 +635,7 @@ function ServiceBlock({
   iconRing,
   delay,
 }) {
+  const { t } = useLanguage();
   return (
     <Reveal delay={delay} className="h-full">
       <div className="group relative h-full rounded-3xl border border-zinc-800/50 bg-zinc-900/30 p-8 sm:p-10 overflow-hidden hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300 flex flex-col">
@@ -634,7 +675,7 @@ function ServiceBlock({
           href="#contato"
           className="relative mt-auto pt-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-50 group-hover:text-sky-300 transition-colors"
         >
-          Conversar com um especialista
+          {t.services.cta}
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </a>
       </div>
@@ -643,21 +684,20 @@ function ServiceBlock({
 }
 
 function Servicos() {
+  const { t } = useLanguage();
   return (
     <section id="servicos" className="px-5 sm:px-8 py-24">
       <div className="max-w-7xl mx-auto">
         <Reveal>
           <div className="max-w-2xl mb-12">
             <span className="text-xs uppercase tracking-widest text-sky-400/80 font-medium">
-              Nosso Carro-Chefe
+              {t.services.eyebrow}
             </span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-semibold text-zinc-50 tracking-tight">
-              Serviços &amp; Consultoria
+              {t.services.title}
             </h2>
             <p className="mt-4 text-zinc-400 leading-relaxed">
-              Hoje, o coração da Revoluk é a consultoria tech de ponta a
-              ponta — do software sob medida à implementação real de
-              Inteligência Artificial no dia a dia da sua operação.
+              {t.services.subtitle}
             </p>
           </div>
         </Reveal>
@@ -665,28 +705,20 @@ function Servicos() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <ServiceBlock
             icon={Code}
-            eyebrow="Desenvolvimento Sob Medida"
-            title="Você traz a necessidade, a Revoluk transforma suas ideias em realidade."
-            description="Consultoria e criação de aplicativos mobile e softwares web com foco absoluto em eficiência e produtividade."
-            bullets={[
-              "Apps mobile iOS e Android nativos ou híbridos",
-              "Plataformas web e sistemas internos sob medida",
-              "Do discovery ao deploy, com o seu time",
-            ]}
+            eyebrow={t.services.block1.eyebrow}
+            title={t.services.block1.title}
+            description={t.services.block1.description}
+            bullets={t.services.block1.bullets}
             accent="bg-sky-500/20"
             iconRing="border-sky-400/30"
             delay={0}
           />
           <ServiceBlock
             icon={Brain}
-            eyebrow="Consultoria e Implementação de IA"
-            title="Transformamos o potencial da Inteligência Artificial em resultados tangíveis."
-            description="Integração de agentes autônomos e soluções baseadas em IA sob medida para otimizar fluxos de trabalho gerenciais, financeiros e operacionais."
-            bullets={[
-              "Agentes de IA autônomos aplicados ao seu processo",
-              "Automação de fluxos gerenciais e financeiros",
-              "Integração com os sistemas que você já usa",
-            ]}
+            eyebrow={t.services.block2.eyebrow}
+            title={t.services.block2.title}
+            description={t.services.block2.description}
+            bullets={t.services.block2.bullets}
             accent="bg-indigo-500/20"
             iconRing="border-indigo-400/30"
             delay={100}
@@ -701,38 +733,8 @@ function Servicos() {
 // História — timeline
 // ---------------------------------------------------------------------------
 function Historia() {
-  const milestones = [
-    {
-      year: "2010",
-      title: "Nascimento",
-      description:
-        "A Revoluk nasce entregando consultoria empresarial inteligente e soluções importadas de todos os cantos do planeta.",
-    },
-    {
-      year: "2013",
-      title: "Gestão empresarial",
-      description:
-        "Início da implementação de softwares de gestão (ERPs), ganhando notoriedade pelo formato simples e objetivo de implantação.",
-    },
-    {
-      year: "2015",
-      title: "Mobile first",
-      description:
-        "Início do desenvolvimento de apps mobile, entregando personalização e fidelização de clientes a negócios em todo o Brasil.",
-    },
-    {
-      year: "2018",
-      title: "Sede em Niterói",
-      description:
-        "Sede transferida para Niterói (RJ). Início de grandes parcerias para remodernização informática e automação comercial e industrial.",
-    },
-    {
-      year: "2022",
-      title: "O grande passo",
-      description:
-        "Sede em Milão, Itália, consolidando-se como referência europeia em automação industrial e processos gerenciais.",
-    },
-  ];
+  const { t } = useLanguage();
+  const milestones = t.history.milestones;
 
   return (
     <section id="historia" className="px-5 sm:px-8 py-24">
@@ -740,10 +742,10 @@ function Historia() {
         <Reveal>
           <div className="text-center mb-16">
             <span className="text-xs uppercase tracking-widest text-sky-400/80 font-medium">
-              Nossa Jornada
+              {t.history.eyebrow}
             </span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-semibold text-zinc-50 tracking-tight">
-              Nossa História
+              {t.history.title}
             </h2>
           </div>
         </Reveal>
@@ -793,6 +795,7 @@ function Historia() {
 // CTA / Contato
 // ---------------------------------------------------------------------------
 function Contato() {
+  const { t } = useLanguage();
   return (
     <section id="contato" className="px-5 sm:px-8 py-24">
       <div className="max-w-5xl mx-auto">
@@ -802,17 +805,16 @@ function Contato() {
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-sky-500/10 blur-[110px] rounded-full" />
             </div>
             <h2 className="text-3xl sm:text-4xl font-semibold text-zinc-50 tracking-tight">
-              Pronto para revolucionar sua operação?
+              {t.contact.title}
             </h2>
             <p className="mt-4 text-zinc-400 max-w-xl mx-auto leading-relaxed">
-              Fale com nosso time e descubra qual solução Revoluk se encaixa
-              no seu negócio.
+              {t.contact.subtitle}
             </p>
             <a
               href="mailto:contato@revoluksolutions.com"
               className="mt-8 inline-flex items-center gap-2 rounded-full bg-zinc-50 text-zinc-950 text-sm font-medium px-6 py-3 hover:bg-sky-300 hover:shadow-[0_0_24px_rgba(125,211,252,0.4)] transition-all"
             >
-              Fale Conosco
+              {t.contact.cta}
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
@@ -826,6 +828,7 @@ function Contato() {
 // Footer
 // ---------------------------------------------------------------------------
 function Footer() {
+  const { t } = useLanguage();
   return (
     <footer className="border-t border-zinc-800/60 px-5 sm:px-8 py-12">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
@@ -837,25 +840,22 @@ function Footer() {
             </span>
           </div>
           <p className="mt-3 text-xs text-zinc-500 max-w-xs leading-relaxed">
-            Holding de soluções em software, automação e consultoria
-            empresarial. Da gestão financeira à automação industrial.
+            {t.footer.tagline}
           </p>
         </div>
 
         <div className="flex flex-col gap-2 text-xs text-zinc-500">
           <div className="flex items-center gap-1.5">
             <MapPin className="h-3.5 w-3.5" />
-            Milão, Itália — Sede Global
+            {t.footer.addr1}
           </div>
           <div className="flex items-center gap-1.5">
             <MapPin className="h-3.5 w-3.5" />
-            Niterói, RJ — Brasil
+            {t.footer.addr2}
           </div>
         </div>
 
-        <div className="text-xs text-zinc-600">
-          © 2026 Revoluk Solution's. Todos os direitos reservados.
-        </div>
+        <div className="text-xs text-zinc-600">{t.footer.copyright}</div>
       </div>
     </footer>
   );
@@ -864,7 +864,7 @@ function Footer() {
 // ---------------------------------------------------------------------------
 // Root
 // ---------------------------------------------------------------------------
-export default function RevolukLandingPage() {
+function RevolukLandingPage() {
   return (
     <div className="min-h-screen bg-zinc-950 antialiased selection:bg-sky-400/20 selection:text-sky-100">
       <Header />
@@ -878,5 +878,13 @@ export default function RevolukLandingPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <RevolukLandingPage />
+    </LanguageProvider>
   );
 }
