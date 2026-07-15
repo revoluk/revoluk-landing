@@ -279,13 +279,6 @@ function Hero() {
       </div>
 
       <div className="max-w-5xl mx-auto text-center">
-        <Reveal>
-          <span className="inline-flex items-center gap-2 rounded-full border border-zinc-800/70 bg-zinc-900/40 px-3.5 py-1.5 text-xs text-zinc-400 mb-7">
-            <span className="h-1.5 w-1.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
-            {t.hero.badge}
-          </span>
-        </Reveal>
-
         <Reveal delay={80}>
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-zinc-50 leading-[1.08]">
             {t.hero.title1}
